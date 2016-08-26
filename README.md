@@ -1,0 +1,1 @@
+# SPIR-V extension for Visual Studio (VSIX)
