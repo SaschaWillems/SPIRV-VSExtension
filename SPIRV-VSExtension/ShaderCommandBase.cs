@@ -203,14 +203,14 @@ namespace SPIRVExtension
                 bool res = compileFunc(shaderFile.fileName, out validatorOutput);
                 if (res)
                 {
-                    msg = string.Format(CultureInfo.CurrentCulture, "Shader successfully compiled to \"{1}\"", shaderFile, shaderFile + ".spv");
+                    msg = string.Format(CultureInfo.CurrentCulture, "Shader successfully compiled to \"{1}\"", shaderFile.fileName, shaderFile.fileName + ".spv");
                     VsShellUtilities.ShowMessageBox(ServiceProvider, msg, title, OLEMSGICON.OLEMSGICON_INFO, OLEMSGBUTTON.OLEMSGBUTTON_OK, OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
                     msg += string.Join("\n", validatorOutput);
                     OutputWindow.Add(msg);
                 }
                 else
                 {
-                    msg = string.Format(CultureInfo.CurrentCulture, "Shader \"{0}\" could not be compiled to SPIR-V! See console window for details.", shaderFile) + "\n";
+                    msg = string.Format(CultureInfo.CurrentCulture, "Shader \"{0}\" could not be compiled to SPIR-V!", shaderFile.fileName) + "\n";
                     Debug.Write(msg);
                     VsShellUtilities.ShowMessageBox(ServiceProvider, msg, title, OLEMSGICON.OLEMSGICON_CRITICAL, OLEMSGBUTTON.OLEMSGBUTTON_OK, OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
                     ParseErrors(validatorOutput, shaderFile);
