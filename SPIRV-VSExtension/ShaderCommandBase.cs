@@ -194,6 +194,7 @@ namespace SPIRVExtension
                 msg = "Could not locate the glslang reference compiler (glslangvalidator.exe) in system path!";
                 VsShellUtilities.ShowMessageBox(ServiceProvider, msg, title, OLEMSGICON.OLEMSGICON_CRITICAL, OLEMSGBUTTON.OLEMSGBUTTON_OK, OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
                 OutputWindow.Add(msg);
+                return;
             }
             
             ErrorList.Clear();
@@ -256,6 +257,7 @@ namespace SPIRVExtension
                 msg = "Could not locate the glslang reference compiler (glslangvalidator.exe) in system path!";
                 VsShellUtilities.ShowMessageBox(ServiceProvider, msg, title, OLEMSGICON.OLEMSGICON_CRITICAL, OLEMSGBUTTON.OLEMSGBUTTON_OK, OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
                 OutputWindow.Add(msg);
+                return false;
             }
 
             List<string> validatorOutput;
