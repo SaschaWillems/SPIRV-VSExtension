@@ -195,29 +195,46 @@ namespace SPIRVExtension
                 VsShellUtilities.ShowMessageBox(ServiceProvider, msg, title, OLEMSGICON.OLEMSGICON_CRITICAL, OLEMSGBUTTON.OLEMSGBUTTON_OK, OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
                 OutputWindow.Add(msg);
             }
-
+            
             ErrorList.Clear();
+
+            bool success = true;
+            msg = "";
             foreach (var shaderFile in shaderFiles)
             {
                 List<string> validatorOutput;
-                bool res = compileFunc(shaderFile.fileName, out validatorOutput);
-                if (res)
+                bool compiled = compileFunc(shaderFile.fileName, out validatorOutput);
+                if (compiled)
                 {
-                    msg = string.Format(CultureInfo.CurrentCulture, "Shader successfully compiled to \"{1}\"", shaderFile.fileName, shaderFile.fileName + ".spv");
-                    VsShellUtilities.ShowMessageBox(ServiceProvider, msg, title, OLEMSGICON.OLEMSGICON_INFO, OLEMSGBUTTON.OLEMSGBUTTON_OK, OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
-                    msg += string.Join("\n", validatorOutput);
-                    OutputWindow.Add(msg);
+                    OutputWindow.Add(string.Join("\n", validatorOutput));
                 }
                 else
                 {
-                    msg = string.Format(CultureInfo.CurrentCulture, "Shader \"{0}\" could not be compiled to SPIR-V!", shaderFile.fileName) + "\n";
+                    msg += string.Format(CultureInfo.CurrentCulture, "Shader \"{0}\" could not be compiled to SPIR-V!", shaderFile.fileName) + "\n";
                     Debug.Write(msg);
-                    VsShellUtilities.ShowMessageBox(ServiceProvider, msg, title, OLEMSGICON.OLEMSGICON_CRITICAL, OLEMSGBUTTON.OLEMSGBUTTON_OK, OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
                     ParseErrors(validatorOutput, shaderFile);
-                    msg += string.Join("\n", validatorOutput);
-                    OutputWindow.Add(msg);
+                    OutputWindow.Add(shaderFile.fileName + "\n" + string.Join("\n", validatorOutput));
+                    success = false;
                 }
             }
+
+            if (success)
+            {
+                if (shaderFiles.Count == 1)
+                {
+                    msg = string.Format(CultureInfo.CurrentCulture, "Shader successfully compiled to \"{0}\"", shaderFiles[0].fileName + ".spv");
+                }
+                else
+                {
+                    msg = "All shaders successfully compiled to SPIR-V";
+                }
+                VsShellUtilities.ShowMessageBox(ServiceProvider, msg, title, OLEMSGICON.OLEMSGICON_INFO, OLEMSGBUTTON.OLEMSGBUTTON_OK, OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
+            }
+            else
+            {
+                VsShellUtilities.ShowMessageBox(ServiceProvider, msg, title, OLEMSGICON.OLEMSGICON_CRITICAL, OLEMSGBUTTON.OLEMSGBUTTON_OK, OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
+            }
+
             if (ErrorList.ErrorCount() > 0)
             {
                 ErrorList.Show();
