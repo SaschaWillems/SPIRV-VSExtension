@@ -36,8 +36,13 @@
          group as the part of a menu contained between two lines. The parent of a group
          must be a menu. -->
     <Groups>
+      <!-- Shader file context menu  -->
       <Group guid="guidSPIRVExtensionPackageCmdSet" id="SPIRVMenuGroup" priority="0x0600">
         <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_ITEMNODE"/>
+      </Group>
+      <!-- Compile all shaders in a folder -->
+      <Group guid="guidSPIRVExtensionPackageCmdSet" id="SPIRVMenuGroupFolder" priority="0x0600">
+        <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_FOLDERNODE"/>
       </Group>
     </Groups>
 
@@ -47,16 +52,27 @@
     <Buttons>
 
       <!-- SPIR-V for Vulkan -->
+      <!-- File selection -->
       <Button guid="guidSPIRVExtensionPackageCmdSet" id="CommandCompileVulkan" priority="0x0100" type="Button">
         <Parent guid="guidSPIRVExtensionPackageCmdSet" id="SPIRVMenuGroup" />
         <Icon guid="guidImages" id="bmpPicVK" />
-        <!-- Command visibility will be toggled at runtime depending on file ext -->
         <CommandFlag>DefaultInvisible</CommandFlag>
         <CommandFlag>DynamicVisibility</CommandFlag>
         <Strings>
           <ButtonText>Compile to SPIR-V for Vulkan</ButtonText>
         </Strings>
       </Button>
+      
+      <!-- Folder -->
+      <Button guid="guidSPIRVExtensionPackageCmdSet" id="CommandCompileVulkan" priority="0x0100" type="Button">
+        <Parent guid="guidSPIRVExtensionPackageCmdSet" id="SPIRVMenuGroupFolder" />
+        <Icon guid="guidImages" id="bmpPicVK" />
+        <CommandFlag>DefaultInvisible</CommandFlag>
+        <CommandFlag>DynamicVisibility</CommandFlag>
+        <Strings>
+          <ButtonText>Compile to SPIR-V for Vulkan</ButtonText>
+        </Strings>
+      </Button>      
       
       <!-- SPIR-V for OpenGL -->
       <Button guid="guidSPIRVExtensionPackageCmdSet" id="CommandCompileOpenGL" priority="0x0110" type="Button">
@@ -100,9 +116,12 @@
     <!-- This is the guid used to group the menu commands together -->
     <GuidSymbol name="guidSPIRVExtensionPackageCmdSet" value="{c25a4989-8e55-4457-822d-1e690eb23169}">
       <IDSymbol name="SPIRVMenuGroup" value="0x1020" />
+      <IDSymbol name="SPIRVMenuGroupFolder" value="0x0200" />
       <IDSymbol name="CommandCompileVulkan" value="0x0100" />
       <IDSymbol name="CommandCompileOpenGL" value="0x0110" />
       <IDSymbol name="CommandHumanReadableSPIRVId" value="0x0130" />
+    
+      <IDSymbol name="CommandCompileVulkanFolder" value="0x0300" />    
     </GuidSymbol>
 
     <GuidSymbol name="guidImages" value="{76cbf672-981b-4c40-8944-4e993caeae21}" >

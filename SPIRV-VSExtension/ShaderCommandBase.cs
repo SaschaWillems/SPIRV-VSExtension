@@ -39,15 +39,47 @@ namespace SPIRVExtension
         }
 
         /// <summary>
+        /// Read hierarchy of an item recursively to also include files in folders
+        /// </summary>
+        public void ReadItemHierarchy(uint itemid, IVsHierarchy hierarchy, List<uint> itemids)
+        {
+            itemids.Add(itemid);
+
+            object value = null;
+            int res = hierarchy.GetProperty(itemid, (int)__VSHPROPID.VSHPROPID_FirstVisibleChild, out value);
+
+            if (res != VSConstants.S_OK || value == null)
+            {
+                // Single item, add and return                
+                if (value is int)
+                {
+                    itemids.Add(Convert.ToUInt32(value));
+                    return;
+                }
+            }
+            else
+            {
+                // Item has siblings (e.g. folder)
+                while (res == VSConstants.S_OK && value != null)
+                {
+                    if (value is int && (uint)(int)value == VSConstants.VSITEMID_NIL)
+                    {
+                        break;
+                    }
+                    uint childNode = Convert.ToUInt32(value);
+                    ReadItemHierarchy(childNode, hierarchy, itemids);
+                    res = hierarchy.GetProperty(childNode, (int)__VSHPROPID.VSHPROPID_NextVisibleSibling, out value);
+                }
+            }
+        }
+
+        /// <summary>
         /// Returns a list of valid shader files from the current file selection
         /// </summary>
         /// <param name="shaderFileNames">List to be filled with all valid shader files from the current selection</param>
         /// <returns>True if at least one shader has been selected</returns>
-        public bool GetSelectedShaderFiles(out List<ShaderFile> shaderFiles)
+        public bool GetSelectedShaderFiles(List<ShaderFile> shaderFiles)
         {
-            List<ShaderFile> selectedShaderFiles = new List<ShaderFile>();
-            shaderFiles = selectedShaderFiles;
-
             IVsHierarchy hierarchy = null;
             uint itemid = VSConstants.VSITEMID_NIL;
             int hr = VSConstants.S_OK;
@@ -61,7 +93,7 @@ namespace SPIRVExtension
 
             IVsMultiItemSelect multiItemSelect = null;
             IntPtr hierarchyPtr = IntPtr.Zero;
-            IntPtr selectionContainerPtr = IntPtr.Zero;
+            IntPtr selectionContainerPtr = IntPtr.Zero;            
 
             try
             {
@@ -82,10 +114,11 @@ namespace SPIRVExtension
 
                 if (multiItemSelect == null)
                 {
-                    itemids.Add(itemid);
+                    ReadItemHierarchy(itemid, hierarchy, itemids);
                 }
                 else
                 {
+                    // todo: Read hierarchy for multi selects
                     uint itemCount = 0;
                     int fSingleHierarchy = 0;
                     hr = multiItemSelect.GetSelectionInfo(out itemCount, out fSingleHierarchy);
@@ -104,10 +137,10 @@ namespace SPIRVExtension
                 {
                     string filepath = null;
                     ((IVsProject)hierarchy).GetMkDocument(id, out filepath);
-                    if (ReferenceCompiler.IsShaderFile(filepath))
+                    if (filepath != null && ReferenceCompiler.IsShaderFile(filepath))
                     {
                         var transformFileInfo = new FileInfo(filepath);
-                        selectedShaderFiles.Add(new ShaderFile(id, hierarchy, filepath));
+                        shaderFiles.Add(new ShaderFile(id, hierarchy, filepath));
                     }
                 }
 
@@ -124,12 +157,7 @@ namespace SPIRVExtension
                     return false;
                 }
 
-                if (shaderFiles != null)
-                {
-                    shaderFiles = selectedShaderFiles;
-                }
-
-                return (selectedShaderFiles.Count > 0);
+                return (shaderFiles.Count > 0);
             }
             finally
             {
@@ -147,7 +175,7 @@ namespace SPIRVExtension
         public int GetSelectedShaderFileCount()
         {
             List<ShaderFile> selectedShaderFiles = new List<ShaderFile>();
-            if (GetSelectedShaderFiles(out selectedShaderFiles))
+            if (GetSelectedShaderFiles(selectedShaderFiles))
             {
                 return selectedShaderFiles.Count;
             }

@@ -53,7 +53,7 @@ namespace SPIRVExtension
         private void MenuItemCallback(object sender, EventArgs e)
         {
             List<ShaderFile> selectedShaderFiles = new List<ShaderFile>();
-            if (GetSelectedShaderFiles(out selectedShaderFiles))
+            if (GetSelectedShaderFiles(selectedShaderFiles))
             {
                 ErrorList.Clear();
                 foreach (var shaderFile in selectedShaderFiles)
