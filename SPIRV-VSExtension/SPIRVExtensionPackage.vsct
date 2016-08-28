@@ -36,13 +36,8 @@
          group as the part of a menu contained between two lines. The parent of a group
          must be a menu. -->
     <Groups>
-      <!-- Shader file context menu  -->
       <Group guid="guidSPIRVExtensionPackageCmdSet" id="SPIRVMenuGroup" priority="0x0600">
-        <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_ITEMNODE"/>
-      </Group>
-      <!-- Compile all shaders in a folder -->
-      <Group guid="guidSPIRVExtensionPackageCmdSet" id="SPIRVMenuGroupFolder" priority="0x0600">
-        <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_FOLDERNODE"/>
+        <!--<Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_ITEMNODE"/>-->
       </Group>
     </Groups>
 
@@ -52,7 +47,6 @@
     <Buttons>
 
       <!-- SPIR-V for Vulkan -->
-      <!-- File selection -->
       <Button guid="guidSPIRVExtensionPackageCmdSet" id="CommandCompileVulkan" priority="0x0100" type="Button">
         <Parent guid="guidSPIRVExtensionPackageCmdSet" id="SPIRVMenuGroup" />
         <Icon guid="guidImages" id="bmpPicVK" />
@@ -62,34 +56,22 @@
           <ButtonText>Compile to SPIR-V for Vulkan</ButtonText>
         </Strings>
       </Button>
-      
-      <!-- Folder -->
-      <Button guid="guidSPIRVExtensionPackageCmdSet" id="CommandCompileVulkan" priority="0x0100" type="Button">
-        <Parent guid="guidSPIRVExtensionPackageCmdSet" id="SPIRVMenuGroupFolder" />
-        <Icon guid="guidImages" id="bmpPicVK" />
-        <CommandFlag>DefaultInvisible</CommandFlag>
-        <CommandFlag>DynamicVisibility</CommandFlag>
-        <Strings>
-          <ButtonText>Compile to SPIR-V for Vulkan</ButtonText>
-        </Strings>
-      </Button>      
-      
+           
       <!-- SPIR-V for OpenGL -->
       <Button guid="guidSPIRVExtensionPackageCmdSet" id="CommandCompileOpenGL" priority="0x0110" type="Button">
         <Parent guid="guidSPIRVExtensionPackageCmdSet" id="SPIRVMenuGroup" />
         <Icon guid="guidImages" id="bmpPicGL" />
-        <!-- Command visibility will be toggled at runtime depending on file ext -->
         <CommandFlag>DefaultInvisible</CommandFlag>
         <CommandFlag>DynamicVisibility</CommandFlag>
         <Strings>
           <ButtonText>Compile to SPIR-V for OpenGL</ButtonText>
         </Strings>
-      </Button>      
-      
+      </Button>
+
+      <!-- Human readable SPIR-V -->
       <Button guid="guidSPIRVExtensionPackageCmdSet" id="CommandHumanReadableSPIRVId" priority="0x0120" type="Button">
         <Parent guid="guidSPIRVExtensionPackageCmdSet" id="SPIRVMenuGroup" />
         <Icon guid="guidImages" id="bmpPicSPIRV" />
-        <!-- Command visibility will be toggled at runtime depending on file ext -->
         <CommandFlag>DefaultInvisible</CommandFlag>
         <CommandFlag>DynamicVisibility</CommandFlag>
         <Strings>
@@ -108,6 +90,15 @@
       <Bitmap guid="guidImages" href="Resources\SPIRVExtension.png" usedList="bmpPicVK, bmpPicGL, bmpPicSPIRV, bmpPicX, bmpPicArrows, bmpPicStrikethrough"/>
     </Bitmaps>
   </Commands>
+
+  <CommandPlacements>
+    <CommandPlacement guid="guidSPIRVExtensionPackageCmdSet" id="SPIRVMenuGroup" priority="0x0600">
+      <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_ITEMNODE" />
+    </CommandPlacement>
+    <CommandPlacement guid="guidSPIRVExtensionPackageCmdSet" id="SPIRVMenuGroup" priority="0x0600">
+      <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_FOLDERNODE" />
+    </CommandPlacement>
+  </CommandPlacements>
 
   <Symbols>
     <!-- This is the package guid. -->
@@ -133,4 +124,5 @@
       <IDSymbol name="bmpPicStrikethrough" value="6" />
     </GuidSymbol>
   </Symbols>
+ 
 </CommandTable>
