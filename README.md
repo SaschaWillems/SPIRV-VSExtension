@@ -4,7 +4,7 @@
 
 <img src="./images/vs2015.png" width="512px">
 
-This VSIX extension adds SPIR-V related commands to the context menu of GLSL shader files for invoking the GLSL reference compiler from inside the IDE.
+This VSIX extension adds SPIR-V related commands to the context menu of GLSL shader files (and folders containing shaders) for invoking the GLSL reference compiler from inside the IDE.
 
 ## Requirements
 
@@ -19,10 +19,11 @@ The extension will search for the ```glslangvalidator.exe``` using the paths fro
 ### Visual Studio
 Currently only **Visual Studio 2015 is supported**, support for older versions may follow in the future.
 
-## File extensions
+## New context menu entries
 <img src="./images/contextmenu.png" height="256px">
+<img src="./images/contextmenufolder.png" height="256px">
 
-The context menu entries will be displayed if the current file selection (multi-select works, no folders yet) includes at least one shader file with a file extension supported by the GLSL reference compiler:
+The context menu entries will be displayed if the current file selection or folder includes at least one shader file with a file extension supported by the GLSL reference compiler:
 - ```.vert``` (Vertex shader)
 - ```.tesc``` (Tessellation control shader)
 - ```.tese``` (Tessellation evaluation shader)
@@ -46,8 +47,6 @@ Compile all selected shader files to SPIR-V binary using OpenGL semantics (-G) a
 
 #### Print human-readable SPIR-V
 
-<img src="./images/humanreadable.png" width="512px">
-
 This will output human readable SPIR-V (-H) using Vulkan semantics and displays it in a new document window.
 
 ### Error list
@@ -62,8 +61,9 @@ This is a very early version of this extension, some of the planned features are
   - Add file extension mappings
   - Custom binary SPIR-V output file name scheme (instead of a fixed output file scheme)
   - Option to disable dialog boxes after compile
+  - Option to use a remapper (SPIR-V remap etc.)
 - Save to text as hexadecimal numbers (-x)
-- Context menu entries on folder (so you can e.g. compile all shaders in a "Shader" folder at once)
+  - Generate include headers
 - Language features (as soon as their support by the reference compiler is finished)
   - Multiple main entry points
   - Compile from HLSL
