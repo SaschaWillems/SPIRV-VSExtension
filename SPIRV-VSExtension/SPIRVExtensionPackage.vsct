@@ -52,8 +52,9 @@
         <Icon guid="guidImages" id="bmpPicVK" />
         <CommandFlag>DefaultInvisible</CommandFlag>
         <CommandFlag>DynamicVisibility</CommandFlag>
+        <CommandFlag>TextChanges</CommandFlag>
         <Strings>
-          <ButtonText>Compile to SPIR-V for Vulkan</ButtonText>
+          <ButtonText>dynamic</ButtonText>
         </Strings>
       </Button>
            
@@ -63,8 +64,9 @@
         <Icon guid="guidImages" id="bmpPicGL" />
         <CommandFlag>DefaultInvisible</CommandFlag>
         <CommandFlag>DynamicVisibility</CommandFlag>
+        <CommandFlag>TextChanges</CommandFlag>
         <Strings>
-          <ButtonText>Compile to SPIR-V for OpenGL</ButtonText>
+          <ButtonText>dynamic</ButtonText>
         </Strings>
       </Button>
 
@@ -74,8 +76,9 @@
         <Icon guid="guidImages" id="bmpPicSPIRV" />
         <CommandFlag>DefaultInvisible</CommandFlag>
         <CommandFlag>DynamicVisibility</CommandFlag>
+        <CommandFlag>TextChanges</CommandFlag>
         <Strings>
-          <ButtonText>Print human-readable SPIR-V</ButtonText>
+          <ButtonText>dynamic</ButtonText>
         </Strings>
       </Button>
     </Buttons>

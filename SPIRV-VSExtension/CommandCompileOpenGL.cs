@@ -63,7 +63,9 @@ namespace SPIRVExtension
             var item = (OleMenuCommand)sender;
             if (item != null)
             {
-                item.Visible = (GetSelectedShaderFileCount() > 0);
+                int count = GetSelectedShaderFileCount();
+                item.Visible = (count > 0);
+                item.Text = (count == 1) ? "Compile to SPIR-V (OpenGL)" : "Compile shaders to SPIR-V (OpenGL)";
             }
         }
 

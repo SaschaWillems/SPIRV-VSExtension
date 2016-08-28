@@ -78,7 +78,9 @@ namespace SPIRVExtension
             var item = (OleMenuCommand)sender;
             if (item != null)
             {
-                item.Visible = (GetSelectedShaderFileCount() > 0);
+                int count = GetSelectedShaderFileCount();
+                item.Visible = (count > 0);
+                item.Text = "Print human-readable SPIR-V";
             }
         }
 
