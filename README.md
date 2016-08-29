@@ -43,7 +43,9 @@ Compile all selected shader files to SPIR-V binary using Vulkan semantics (-V) a
 #### Compile to SPIR-V (OpenGL semantics)
 Compile all selected shader files to SPIR-V binary using OpenGL semantics (-G) and output to ```"filename"."stage".spv```. 
 
-**Note:** SPIR-V for OpenGL is supported with the [```GL_ARB_gl_spirv```](https://www.opengl.org/registry/specs/ARB/gl_spirv.txt) extension.
+**Note:** SPIR-V for OpenGL is supported with the [```GL_ARB_gl_spirv```](https://www.opengl.org/registry/specs/ARB/gl_spirv.txt) extension and implemented as a binary shader format. 
+
+A C++ example for loading a binary SPIR-V shader with OpenGL [can be found here](https://github.com/SaschaWillems/openglcpp/tree/master/SPIRVShader).
 
 #### Print human-readable SPIR-V
 
