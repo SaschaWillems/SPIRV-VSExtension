@@ -191,12 +191,14 @@ namespace SPIRVExtension
         {
             foreach (string line in validatorOutput)
             {
-                MatchCollection matches = Regex.Matches(line, @"\d+:", RegexOptions.IgnoreCase);
-                // Example: ERROR: 0:26: 'aaa' : undeclared identifier 
-                if (matches.Count > 1)
+                // Examples: 
+                //  ERROR: 0:26: 'aaa' : undeclared identifier 
+                //  ERROR: E:\Vulkan\public\Vulkan\data\shaders\indirectdraw\ground.frag:16: '' : function does not return a value: test
+                MatchCollection matches = Regex.Matches(line, @":\d+:\s", RegexOptions.IgnoreCase | RegexOptions.RightToLeft);
+                if (matches.Count > 0)
                 {
                     // Line
-                    int errorLine = Convert.ToInt32(matches[1].Value.Replace(":", ""));
+                    int errorLine = Convert.ToInt32(matches[0].Value.Replace(":", ""));
                     // Error message
                     string msg = line;
                     Match match = Regex.Match(line, @"ERROR:\s.*\d+:(.*)", RegexOptions.IgnoreCase);
