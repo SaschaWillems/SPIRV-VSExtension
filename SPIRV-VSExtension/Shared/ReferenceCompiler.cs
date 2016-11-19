@@ -102,7 +102,7 @@ namespace SPIRVExtension
         /// </summary>
         public static bool CompileToVulkan(string fileName, out List<string> validatorOutput)
         {
-            string commandLine = string.Format(CultureInfo.CurrentCulture, "-V {0} -o {1}", fileName, fileName + ".spv");
+            string commandLine = string.Format(CultureInfo.CurrentCulture, "-V \"{0}\" -o \"{1}\"", fileName, fileName + ".spv");
             return Run(fileName, commandLine, out validatorOutput);
         }
 
@@ -111,7 +111,7 @@ namespace SPIRVExtension
         /// </summary>
         public static bool CompileToOpenGL(string fileName, out List<string> validatorOutput)
         {
-            string commandLine = string.Format(CultureInfo.CurrentCulture, "-G {0} -o {1}", fileName, fileName + ".spv");
+            string commandLine = string.Format(CultureInfo.CurrentCulture, "-G \"{0}\" -o \"{1}\"", fileName, fileName + ".spv");
             return Run(fileName, commandLine, out validatorOutput);
         }
 
@@ -120,7 +120,7 @@ namespace SPIRVExtension
         /// </summary>
         public static bool GetHumanReadableSPIRV(string fileName, out List<string> validatorOutput)
         {
-            string commandLine = string.Format(CultureInfo.CurrentCulture, "-H {0}", fileName);
+            string commandLine = string.Format(CultureInfo.CurrentCulture, "-H \"{0}\"", fileName);
             return Run(fileName, commandLine, out validatorOutput);
         }
     }
