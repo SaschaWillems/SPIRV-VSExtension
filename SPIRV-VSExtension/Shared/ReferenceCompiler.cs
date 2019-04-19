@@ -53,7 +53,7 @@ namespace SPIRVExtension
         /// </summary>
         public static bool IsShaderFile(string fileName)
         {
-            var shaderExtensions = new[] { ".vert", ".tesc", ".tese", ".geom", ".frag", ".comp" };
+            var shaderExtensions = new[] { ".vert", ".tesc", ".tese", ".geom", ".frag", ".comp", ".mesh", ".task", ".rgen", ".rint", ".rahit", ".rchit", ".rmiss", ".rcall" };
             foreach (string ext in shaderExtensions)
             {
                 if (string.Compare(ext, Path.GetExtension(fileName), StringComparison.OrdinalIgnoreCase) == 0)
