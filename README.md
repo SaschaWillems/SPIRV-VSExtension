@@ -16,8 +16,12 @@ The extension requires a version of the glslang reference compiler to be in your
 
 The extension will search for the ```glslangvalidator.exe``` using the paths from the following environment variables: ```PATH```, ```VK_SDK_PATH``` and ```VULKAN_SDK``` (set by the LunarG SDK)
 
-### Visual Studio
-Currently only **Visual Studio 2015 is supported**, support for older versions may follow in the future.
+### Supported Visual Studio versions
+The extension supports all editions of **Visual Studio 2015, 2017 and 2019**.
+
+## Installation
+
+The extension is available at the [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=SaschaWillems.SPIRV-VSExtension) and can be installed directly from the IDE.
 
 ## New context menu entries
 <img src="./images/contextmenu.png" height="256px">
@@ -30,6 +34,14 @@ The context menu entries will be displayed if the current file selection or fold
 - ```.geom``` (Geometry shader)
 - ```.frag``` (Fragment shader)
 - ```.comp``` (Compute shader)
+- ```.mesh``` (Mesh shader)
+- ```.task``` (Task shader)
+- ```.rgen``` (Ray generation shader)
+- ```.rint``` (Ray intersection shader)
+- ```.rahit``` (Ray any hit shader)
+- ```.rchit``` (Ray closest hit shader)
+- ```.rmiss``` (Ray miss shader)
+- ```.rcall``` (Ray callable shader)
 
 These are currently fixed, but future versions may add an options pane to adjust file extensions and how they are treated.
 
