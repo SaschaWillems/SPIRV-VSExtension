@@ -81,6 +81,19 @@
           <ButtonText>dynamic</ButtonText>
         </Strings>
       </Button>
+		
+      <!-- SPIR-V for Vulkan with DXC -->
+      <Button guid="guidSPIRVExtensionPackageCmdSet" id="CommandCompileHLSL" priority="0x0140" type="Button">
+        <Parent guid="guidSPIRVExtensionPackageCmdSet" id="SPIRVMenuGroup" />
+        <Icon guid="guidImages" id="bmpPicVK" />
+        <CommandFlag>DefaultInvisible</CommandFlag>
+        <CommandFlag>DynamicVisibility</CommandFlag>
+        <CommandFlag>TextChanges</CommandFlag>
+        <Strings>
+          <ButtonText>dynamic</ButtonText>
+        </Strings>
+      </Button>		
+		
     </Buttons>
 
     <!--The bitmaps section is used to define the bitmaps that are used for the commands.-->
@@ -114,6 +127,7 @@
       <IDSymbol name="CommandCompileVulkan" value="0x0100" />
       <IDSymbol name="CommandCompileOpenGL" value="0x0110" />
       <IDSymbol name="CommandHumanReadableSPIRVId" value="0x0130" />
+      <IDSymbol name="CommandCompileHLSL" value="0x0140" />
     
       <IDSymbol name="CommandCompileVulkanFolder" value="0x0300" />    
     </GuidSymbol>

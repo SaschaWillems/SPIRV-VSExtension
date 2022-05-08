@@ -19,7 +19,7 @@ namespace SPIRVExtension
         public static readonly Guid CommandSet = new Guid("c25a4989-8e55-4457-822d-1e690eb23169");
         private readonly Package package;
 
-        private CommandCompileVulkan(Package package) : base(package, "Compile to SPIR-V (Vulkan semantics)")
+        private CommandCompileVulkan(Package package) : base(package, "Compile GLSL to SPIR-V (Vulkan semantics)")
         {
             if (package == null)
             {
@@ -54,7 +54,7 @@ namespace SPIRVExtension
             List<ShaderFile> selectedShaderFiles = new List<ShaderFile>();
             if (GetSelectedShaderFiles(selectedShaderFiles))
             {
-                CompileShaders(selectedShaderFiles, ReferenceCompiler.CompileToVulkan);
+                CompileShaders(selectedShaderFiles, GlslangCompiler.CompileToVulkan);
             }
         }
 
@@ -65,7 +65,7 @@ namespace SPIRVExtension
             {
                 int count = GetSelectedShaderFileCount();
                 item.Visible = (count > 0);
-                item.Text = (count == 1) ? "Compile to SPIR-V (Vulkan)" : "Compile shaders to SPIR-V (Vulkan)";
+                item.Text = (count == 1) ? "Compile GLSL to SPIR-V (Vulkan)" : "Compile GLSL shaders to SPIR-V (Vulkan)";
             }
         }
 

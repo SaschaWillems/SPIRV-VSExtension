@@ -21,15 +21,20 @@ using Microsoft.Win32;
 
 public class OptionPageGrid : DialogPage
 {
-    [Category("General")]
+    [Category("GLSL")]
     [DisplayName("Target Environment")]
     [Description("Select the target environment for Vulkan shader compilation")]
     public string OptionTargetEnv { get; set; } = "";
 
-    [Category("General")]
+    [Category("GLSL")]
     [DisplayName("glslangvalidator path")]
     [Description("Manually specify a path to the glslangvalidator binary to override the default one from PATH")]
     public string OptionGlslangValidatorBinaryPath { get; set; } = "";
+
+    [Category("HLSL")]
+    [DisplayName("dxc path")]
+    [Description("Manually specify a path to the dxc binary to override the default one from PATH")]
+    public string OptionDxcBinaryPath { get; set; } = "";
 }
 
 namespace SPIRVExtension
@@ -86,6 +91,7 @@ namespace SPIRVExtension
         protected override void Initialize()
         {
             CommandCompileVulkan.Initialize(this);
+            CommandCompileHLSL.Initialize(this);
             CommandCompileOpenGL.Initialize(this);
             CommandPrintSPIRV.Initialize(this);
 
@@ -111,7 +117,14 @@ namespace SPIRVExtension
             }
         }
 
-
+        public string OptionDxcBinaryPath
+        {
+            get
+            {
+                OptionPageGrid page = (OptionPageGrid)GetDialogPage(typeof(OptionPageGrid));
+                return page.OptionDxcBinaryPath;
+            }
+        }
         #endregion
     }
 }

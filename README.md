@@ -4,17 +4,25 @@
 
 <img src="./images/vs2015.png" width="512px">
 
-This VSIX extension adds SPIR-V related commands to the context menu of GLSL shader files (and folders containing shaders) for invoking the GLSL reference compiler from inside the IDE.
+This VSIX extension adds commands to the context menu of shader files (and folders containing shaders) that let's you quickly compile to them to SPIR-V and supports both GLSL and HLSL as source. 
 
 ## Requirements
 
 ### GLSL standalone reference compiler
 The extension requires a version of the glslang reference compiler to be in your path that supports SPIR-V:
 
-- Built from the sources at [https://github.com/KhronosGroup/glslang](https://github.com/KhronosGroup/glslang)
 - Install the [LunartG Vulkan SDK](https://vulkan.lunarg.com/) (comes with a pre-built version)
+- Built from the sources at [https://github.com/KhronosGroup/glslang](https://github.com/KhronosGroup/glslang)
 
-The extension will search for the ```glslangvalidator.exe``` using the paths from the following environment variables: ```PATH```, ```VK_SDK_PATH``` and ```VULKAN_SDK``` (set by the LunarG SDK)
+The extension will search for the ```glslangvalidator.exe``` using the paths from the following environment variables: ```PATH```, ```VK_SDK_PATH``` and ```VULKAN_SDK``` (set by the LunarG SDK). Alternatively you can override this with an explicit location in the extensions' settings page.
+
+### DXC standalone compiler
+For compiling from HLSL, the extension requires a version of the DirectX shader compiler to be in your path that supports SPIR-V:
+
+- Install the [LunartG Vulkan SDK](https://vulkan.lunarg.com/) (comes with a pre-built version)
+- Built from the sources at [https://github.com/microsoft/DirectXShaderCompiler/](https://github.com/microsoft/DirectXShaderCompiler/)
+
+The extension will search for the ```dxc.exe``` using the paths from the following environment variables: ```PATH```, ```VK_SDK_PATH``` and ```VULKAN_SDK``` (set by the LunarG SDK). Alternatively you can override this with an explicit location in the extensions' settings page.
 
 ### Supported Visual Studio versions
 The extension supports all editions of **Visual Studio 2015, 2017 and 2019**.
@@ -49,11 +57,14 @@ These are currently fixed, but future versions may add an options pane to adjust
 
 ### SPIR-V functions
 
-#### Compile to SPIR-V (Vulkan semantics)
-Compile all selected shader files to SPIR-V binary using Vulkan semantics (-V) and output to ```"filename"."stage".spv```.
+#### Compile GLSL to SPIR-V (Vulkan semantics)
+Compile all selected GLSL shader files to SPIR-V binary using Vulkan semantics (-V).
+
+#### Compile HLSL to SPIR-V (DXC)
+Compile all selected HLSL shader files to SPIR-V binary format using the SPIR-V back-end of the DirectX shader compiler.
 
 #### Compile to SPIR-V (OpenGL semantics)
-Compile all selected shader files to SPIR-V binary using OpenGL semantics (-G) and output to ```"filename"."stage".spv```. 
+Compile all selected shader files to SPIR-V binary using OpenGL semantics (-G).
 
 **Note:** SPIR-V for OpenGL is supported with the [```GL_ARB_gl_spirv```](https://www.opengl.org/registry/specs/ARB/gl_spirv.txt) extension and implemented as a binary shader format. 
 

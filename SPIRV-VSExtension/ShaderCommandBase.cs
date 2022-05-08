@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using SPIRVExtension.Shared;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -137,7 +138,7 @@ namespace SPIRVExtension
                 {
                     string filepath = null;
                     ((IVsProject)hierarchy).GetMkDocument(id, out filepath);
-                    if (filepath != null && ReferenceCompiler.IsShaderFile(filepath))
+                    if (filepath != null && Utils.IsShaderFile(filepath))
                     {
                         var transformFileInfo = new FileInfo(filepath);
                         shaderFiles.Add(new ShaderFile(id, hierarchy, filepath));
@@ -219,13 +220,14 @@ namespace SPIRVExtension
             string title = name;
             string msg;
 
-            if (ReferenceCompiler.Locate(package as SPIRVExtensionPackage) == null)
-            {
-                msg = "Could not locate the glslang reference compiler (glslangvalidator.exe) in system path!";
-                VsShellUtilities.ShowMessageBox(ServiceProvider, msg, title, OLEMSGICON.OLEMSGICON_CRITICAL, OLEMSGBUTTON.OLEMSGBUTTON_OK, OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
-                OutputWindow.Add(msg);
-                return;
-            }
+            // @todo
+            //if (GlslangCompiler.Locate(package as SPIRVExtensionPackage) == null)
+            //{
+            //    msg = "Could not locate the glslang reference compiler (glslangvalidator.exe) in system path!";
+            //    VsShellUtilities.ShowMessageBox(ServiceProvider, msg, title, OLEMSGICON.OLEMSGICON_CRITICAL, OLEMSGBUTTON.OLEMSGBUTTON_OK, OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
+            //    OutputWindow.Add(msg);
+            //    return;
+            //}
             
             ErrorList.Clear();
 
@@ -284,7 +286,7 @@ namespace SPIRVExtension
             string title = name;
             string msg;
 
-            if (ReferenceCompiler.Locate(package as SPIRVExtensionPackage) == null)
+            if (GlslangCompiler.Locate(package as SPIRVExtensionPackage) == null)
             {
                 msg = "Could not locate the glslang reference compiler (glslangvalidator.exe) in system path!";
                 VsShellUtilities.ShowMessageBox(ServiceProvider, msg, title, OLEMSGICON.OLEMSGICON_CRITICAL, OLEMSGBUTTON.OLEMSGBUTTON_OK, OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
@@ -293,7 +295,7 @@ namespace SPIRVExtension
             }
 
             List<string> validatorOutput;
-            bool res = ReferenceCompiler.GetHumanReadableSPIRV(shaderFile.fileName, out validatorOutput, package as SPIRVExtensionPackage);
+            bool res = GlslangCompiler.GetHumanReadableSPIRV(shaderFile.fileName, out validatorOutput, package as SPIRVExtensionPackage);
             if (res)
             {
                 spirvOutput = validatorOutput;

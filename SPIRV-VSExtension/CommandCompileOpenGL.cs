@@ -54,7 +54,7 @@ namespace SPIRVExtension
             List<ShaderFile> selectedShaderFiles = new List<ShaderFile>();
             if (GetSelectedShaderFiles(selectedShaderFiles))
             {
-                CompileShaders(selectedShaderFiles, ReferenceCompiler.CompileToOpenGL);
+                CompileShaders(selectedShaderFiles, GlslangCompiler.CompileToOpenGL);
             }
         }
 

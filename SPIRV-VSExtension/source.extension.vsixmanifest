@@ -3,7 +3,7 @@
     <Metadata>
         <Identity Id="SPIRV-VSExtension.Sascha Willems.5d468aca-a2f8-4bdb-8494-3321c9335623" Version="0.7" Language="en-US" Publisher="Sascha Willems" />
         <DisplayName>SPIRV-VSExtension</DisplayName>
-        <Description xml:space="preserve">Adds SPIR-V commands to the context menu of GLSL shader files and folders. Generate SPIR-V binaries for Vulkan or OpenGL and display human readable SPIR-V directly inside Visual Studio.</Description>
+        <Description xml:space="preserve">Adds SPIR-V commands to the context menu of GLSL/HLSL shader files and folders. Generate SPIR-V binaries for Vulkan or OpenGL and display human readable SPIR-V directly inside Visual Studio.</Description>
         <License>LICENSE</License>
     </Metadata>
     <Installation>
