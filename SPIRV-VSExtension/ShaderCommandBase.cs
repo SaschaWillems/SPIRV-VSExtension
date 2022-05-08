@@ -11,7 +11,7 @@ using System.Text.RegularExpressions;
 
 namespace SPIRVExtension
 {
-    public delegate bool CompileFunc(string a, out List<string> b);
+    public delegate bool CompileFunc(string a, out List<string> b, SPIRVExtensionPackage p);
 
     /// <summary>
     /// Base class for commands that compile to SPIR-V
@@ -219,7 +219,7 @@ namespace SPIRVExtension
             string title = name;
             string msg;
 
-            if (ReferenceCompiler.Locate() == null)
+            if (ReferenceCompiler.Locate(package as SPIRVExtensionPackage) == null)
             {
                 msg = "Could not locate the glslang reference compiler (glslangvalidator.exe) in system path!";
                 VsShellUtilities.ShowMessageBox(ServiceProvider, msg, title, OLEMSGICON.OLEMSGICON_CRITICAL, OLEMSGBUTTON.OLEMSGBUTTON_OK, OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
@@ -233,8 +233,10 @@ namespace SPIRVExtension
             msg = "";
             foreach (var shaderFile in shaderFiles)
             {
+                string targetEnv = (package as SPIRVExtensionPackage).OptionTargetEnv;
+
                 List<string> validatorOutput;
-                bool compiled = compileFunc(shaderFile.fileName, out validatorOutput);
+                bool compiled = compileFunc(shaderFile.fileName, out validatorOutput, package as SPIRVExtensionPackage);
                 if (compiled)
                 {
                     OutputWindow.Add(string.Join("\n", validatorOutput));
@@ -282,7 +284,7 @@ namespace SPIRVExtension
             string title = name;
             string msg;
 
-            if (ReferenceCompiler.Locate() == null)
+            if (ReferenceCompiler.Locate(package as SPIRVExtensionPackage) == null)
             {
                 msg = "Could not locate the glslang reference compiler (glslangvalidator.exe) in system path!";
                 VsShellUtilities.ShowMessageBox(ServiceProvider, msg, title, OLEMSGICON.OLEMSGICON_CRITICAL, OLEMSGBUTTON.OLEMSGBUTTON_OK, OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
@@ -291,7 +293,7 @@ namespace SPIRVExtension
             }
 
             List<string> validatorOutput;
-            bool res = ReferenceCompiler.GetHumanReadableSPIRV(shaderFile.fileName, out validatorOutput);
+            bool res = ReferenceCompiler.GetHumanReadableSPIRV(shaderFile.fileName, out validatorOutput, package as SPIRVExtensionPackage);
             if (res)
             {
                 spirvOutput = validatorOutput;

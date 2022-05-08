@@ -12,11 +12,25 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Runtime.InteropServices;
+using System.ComponentModel;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.OLE.Interop;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.Win32;
+
+public class OptionPageGrid : DialogPage
+{
+    [Category("General")]
+    [DisplayName("Target Environment")]
+    [Description("Select the target environment for Vulkan shader compilation")]
+    public string OptionTargetEnv { get; set; } = "";
+
+    [Category("General")]
+    [DisplayName("glslangvalidator path")]
+    [Description("Manually specify a path to the glslangvalidator binary to override the default one from PATH")]
+    public string OptionGlslangValidatorBinaryPath { get; set; } = "";
+}
 
 namespace SPIRVExtension
 {
@@ -43,6 +57,8 @@ namespace SPIRVExtension
     [Guid(SPIRVExtensionPackage.PackageGuidString)]
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "pkgdef, VS and vsixmanifest are valid VS terms")]
     [ProvideAutoLoad("f1536ef8-92ec-443c-9ed7-fdadf150da82")]
+    [ProvideOptionPage(typeof(OptionPageGrid),
+    "SPIRV Extension", "General", 0, 0, true)]
     public sealed class SPIRVExtensionPackage : Package
     {
         /// <summary>
@@ -76,6 +92,25 @@ namespace SPIRVExtension
             base.Initialize();
             ErrorList.Initialize(this);
         }
+
+        public string OptionTargetEnv
+        {
+            get
+            {
+                OptionPageGrid page = (OptionPageGrid)GetDialogPage(typeof(OptionPageGrid));
+                return page.OptionTargetEnv;
+            }
+        }
+
+        public string OptionGlslangValidatorBinaryPath
+        {
+            get
+            {
+                OptionPageGrid page = (OptionPageGrid)GetDialogPage(typeof(OptionPageGrid));
+                return page.OptionGlslangValidatorBinaryPath;
+            }
+        }
+
 
         #endregion
     }

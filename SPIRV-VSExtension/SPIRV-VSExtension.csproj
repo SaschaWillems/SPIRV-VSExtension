@@ -71,13 +71,16 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DeployExtension>True</DeployExtension>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="CommandCompileOpenGL.cs" />
     <Compile Include="CommandCompileVulkan.cs" />
     <Compile Include="CommandPrintSPIRV.cs" />
     <Compile Include="ShaderCommandBase.cs" />
-    <Compile Include="SPIRVExtensionPackage.cs" />
+    <Compile Include="SPIRVExtensionPackage.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Shared\DocumentHelper.cs" />
     <Compile Include="Shared\ErrorList.cs" />
     <Compile Include="Shared\OutputWindow.cs" />
