@@ -18,6 +18,8 @@ using Microsoft.VisualStudio.OLE.Interop;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.Win32;
+using System.Threading.Tasks;
+using System.Threading;
 
 public class OptionPageGrid : DialogPage
 {
@@ -56,15 +58,15 @@ namespace SPIRVExtension
     /// To get loaded into VS, the package must be referred by &lt;Asset Type="Microsoft.VisualStudio.VsPackage" ...&gt; in .vsixmanifest file.
     /// </para>
     /// </remarks>
-    [PackageRegistration(UseManagedResourcesOnly = true)]
+    [PackageRegistration(UseManagedResourcesOnly = true, AllowsBackgroundLoading = true)]
     [InstalledProductRegistration("#110", "#112", "1.0", IconResourceID = 400)] // Info on this package for Help/About
     [ProvideMenuResource("Menus.ctmenu", 1)]
     [Guid(SPIRVExtensionPackage.PackageGuidString)]
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "pkgdef, VS and vsixmanifest are valid VS terms")]
-    [ProvideAutoLoad("f1536ef8-92ec-443c-9ed7-fdadf150da82")]
+    [ProvideAutoLoad("f1536ef8-92ec-443c-9ed7-fdadf150da82", PackageAutoLoadFlags.BackgroundLoad)]
     [ProvideOptionPage(typeof(OptionPageGrid),
     "SPIRV Extension", "General", 0, 0, true)]
-    public sealed class SPIRVExtensionPackage : Package
+    public sealed class SPIRVExtensionPackage : AsyncPackage
     {
         /// <summary>
         /// SPIRVExtension GUID string.
@@ -84,19 +86,22 @@ namespace SPIRVExtension
 
         #region Package Members
 
-        /// <summary>
-        /// Initialization of the package; this method is called right after the package is sited, so this is the place
-        /// where you can put all the initialization code that rely on services provided by VisualStudio.
-        /// </summary>
-        protected override void Initialize()
+        protected override async Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress)
         {
+            await base.InitializeAsync(cancellationToken, progress);
+
             CommandCompileVulkan.Initialize(this);
             CommandCompileHLSL.Initialize(this);
             CommandCompileOpenGL.Initialize(this);
             CommandPrintSPIRV.Initialize(this);
 
-            base.Initialize();
+            //base.Initialize();
             ErrorList.Initialize(this);
+
+            // When initialized asynchronously, we *may* be on a background thread at this point.
+            // Do any initialization that requires the UI thread after switching to the UI thread.
+            // Otherwise, remove the switch to the UI thread if you don't need it.
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
         }
 
         public string OptionTargetEnv

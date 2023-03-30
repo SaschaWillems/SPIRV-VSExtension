@@ -220,14 +220,13 @@ namespace SPIRVExtension
             string title = name;
             string msg;
 
-            // @todo
-            //if (GlslangCompiler.Locate(package as SPIRVExtensionPackage) == null)
-            //{
-            //    msg = "Could not locate the glslang reference compiler (glslangvalidator.exe) in system path!";
-            //    VsShellUtilities.ShowMessageBox(ServiceProvider, msg, title, OLEMSGICON.OLEMSGICON_CRITICAL, OLEMSGBUTTON.OLEMSGBUTTON_OK, OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
-            //    OutputWindow.Add(msg);
-            //    return;
-            //}
+            if (GlslangCompiler.Locate(package as SPIRVExtensionPackage) == null)
+            {
+                msg = "Could not locate the glslang reference compiler (glslangvalidator.exe) in system path!";
+                VsShellUtilities.ShowMessageBox(ServiceProvider, msg, title, OLEMSGICON.OLEMSGICON_CRITICAL, OLEMSGBUTTON.OLEMSGBUTTON_OK, OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
+                OutputWindow.Add(msg);
+                return;
+            }
             
             ErrorList.Clear();
 

@@ -61,7 +61,7 @@ namespace SPIRVExtension
         /// </summary>
         public static void NavigateDocument(object sender, EventArgs e)
         {
-            Task task = sender as Task;
+            ErrorTask task = sender as ErrorTask;
             OpenAndNavigateTo(task.Document, task.Line, task.Column);
         }
     }
