@@ -6,6 +6,7 @@
 * This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
 */
 
+using Microsoft.VisualStudio.Shell;
 using SPIRVExtension.Shared;
 using System;
 using System.Collections.Generic;
@@ -59,6 +60,7 @@ namespace SPIRVExtension
             startInfo.Arguments = commandLine;
             startInfo.UseShellExecute = false;
             startInfo.RedirectStandardOutput = true;
+            startInfo.RedirectStandardError = true;
             startInfo.CreateNoWindow = true;
 
             var process = new Process();
@@ -82,6 +84,10 @@ namespace SPIRVExtension
             while (!process.StandardOutput.EndOfStream)
             {
                 output.Add(process.StandardOutput.ReadLine());
+            }
+            while (!process.StandardError.EndOfStream)
+            {
+                output.Add(process.StandardError.ReadLine());
             }
 
             validatorOutput = output;
@@ -113,7 +119,6 @@ namespace SPIRVExtension
             string fileExt = Path.GetExtension(fileName).ToLower();
             if (!profileDictionary.ContainsKey(fileExt))
             {
-                // @todo: add message
                 List<string> output = new List<string>();
                 output.Add("Could not match file extension to HLSL shader profile");
                 validatorOutput = output;
