@@ -10,9 +10,10 @@ using System;
 using System.ComponentModel.Design;
 using System.Collections.Generic;
 using Microsoft.VisualStudio.Shell;
+using System.Text.RegularExpressions;
 
 namespace SPIRVExtension
-{    
+{
     internal sealed class CommandCompileHLSL : ShaderCommandBase
     {
         public const int CommandId = 0x0140;
@@ -69,5 +70,28 @@ namespace SPIRVExtension
             }
         }
 
+        public override void ParseErrors(List<string> validatorOutput, ShaderFile shaderFile)
+        {
+            foreach (string line in validatorOutput)
+            {
+                // Example:
+                // V:\Vulkan\Vulkan_mstr\data\shaders\hlsl\raytracingbasic\raygen.rgen:38:2: error: use of undeclared identifier 'imxage'; did you mean 'image'?
+                MatchCollection matches = Regex.Matches(line, @":\d+:\d+", RegexOptions.IgnoreCase | RegexOptions.RightToLeft);
+                if (matches.Count > 0)
+                {
+                    // Line is the first number after :
+                    MatchCollection lineMatches = Regex.Matches(line, @":\d+:", RegexOptions.IgnoreCase);
+                    int errorLine = Convert.ToInt32(lineMatches[0].Value.Replace(":", ""));
+                    // Error message
+                    string msg = line;
+                    Match match = Regex.Match(line, @"ERROR:\s.*\d+:(.*)", RegexOptions.IgnoreCase);
+                    if (match.Success)
+                    {
+                        msg = match.Groups[1].Value;
+                    }
+                    ErrorList.Add(msg, shaderFile.fileName, errorLine, 0, shaderFile.hierarchy);
+                }
+            }
+        }
     }
 }

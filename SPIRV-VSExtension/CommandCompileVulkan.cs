@@ -10,6 +10,7 @@ using System;
 using System.ComponentModel.Design;
 using System.Collections.Generic;
 using Microsoft.VisualStudio.Shell;
+using System.Text.RegularExpressions;
 
 namespace SPIRVExtension
 {    
@@ -69,5 +70,28 @@ namespace SPIRVExtension
             }
         }
 
+        public override void ParseErrors(List<string> validatorOutput, ShaderFile shaderFile)
+        {
+            foreach (string line in validatorOutput)
+            {
+                // Examples: 
+                //  ERROR: 0:26: 'aaa' : undeclared identifier 
+                //  ERROR: E:\Vulkan\public\Vulkan\data\shaders\indirectdraw\ground.frag:16: '' : function does not return a value: test
+                MatchCollection matches = Regex.Matches(line, @":\d+:\s", RegexOptions.IgnoreCase | RegexOptions.RightToLeft);
+                if (matches.Count > 0)
+                {
+                    // Line
+                    int errorLine = Convert.ToInt32(matches[0].Value.Replace(":", ""));
+                    // Error message
+                    string msg = line;
+                    Match match = Regex.Match(line, @"ERROR:\s.*\d+:(.*)", RegexOptions.IgnoreCase);
+                    if (match.Success)
+                    {
+                        msg = match.Groups[1].Value;
+                    }
+                    ErrorList.Add(msg, shaderFile.fileName, errorLine, 0, shaderFile.hierarchy);
+                }
+            }
+        }
     }
 }

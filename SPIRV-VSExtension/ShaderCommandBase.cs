@@ -200,29 +200,7 @@ namespace SPIRVExtension
         /// </summary>
         /// <param name="validatorOutput">Output of the reference compiler</param>
         /// <param name="shaderFile">Shader file info for which the validator output has been generated</param>
-        public void ParseErrors(List<string> validatorOutput, ShaderFile shaderFile)
-        {
-            foreach (string line in validatorOutput)
-            {
-                // Examples: 
-                //  ERROR: 0:26: 'aaa' : undeclared identifier 
-                //  ERROR: E:\Vulkan\public\Vulkan\data\shaders\indirectdraw\ground.frag:16: '' : function does not return a value: test
-                MatchCollection matches = Regex.Matches(line, @":\d+:\s", RegexOptions.IgnoreCase | RegexOptions.RightToLeft);
-                if (matches.Count > 0)
-                {
-                    // Line
-                    int errorLine = Convert.ToInt32(matches[0].Value.Replace(":", ""));
-                    // Error message
-                    string msg = line;
-                    Match match = Regex.Match(line, @"ERROR:\s.*\d+:(.*)", RegexOptions.IgnoreCase);
-                    if (match.Success)
-                    {
-                        msg = match.Groups[1].Value;
-                    }
-                    ErrorList.Add(msg, shaderFile.fileName, errorLine, 0, shaderFile.hierarchy);
-                }
-            }
-        }
+        public virtual void ParseErrors(List<string> validatorOutput, ShaderFile shaderFile) { }
 
         /// <summary>
         /// Compile the shader file using the given compilation function
