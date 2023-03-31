@@ -107,6 +107,8 @@ namespace SPIRVExtension
                 { ".rchit", "lib_6_3" },
                 { ".rmiss", "lib_6_3" },
                 { ".rahit", "lib_6_3" },
+                { ".mesh", "ms_6_6" },
+                { ".task", "as_6_6" },
             };
             string fileExt = Path.GetExtension(fileName).ToLower();
             if (!profileDictionary.ContainsKey(fileExt))
