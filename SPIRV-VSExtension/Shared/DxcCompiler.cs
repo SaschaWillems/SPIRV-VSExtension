@@ -1,17 +1,15 @@
 ﻿/*
 * SPIR-V Visual Studio Extension
 *
-* Copyright (C) 2016-2022 by Sascha Willems - www.saschawillems.de
+* Copyright (C) 2016-2023 by Sascha Willems - www.saschawillems.de
 *
 * This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
 */
 
-using Microsoft.VisualStudio.Shell;
 using SPIRVExtension.Shared;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 
 namespace SPIRVExtension
@@ -108,6 +106,7 @@ namespace SPIRVExtension
                 { ".rgen", "lib_6_3" },
                 { ".rchit", "lib_6_3" },
                 { ".rmiss", "lib_6_3" },
+                { ".rahit", "lib_6_3" },
             };
             string fileExt = Path.GetExtension(fileName).ToLower();
             if (!profileDictionary.ContainsKey(fileExt))
@@ -120,10 +119,12 @@ namespace SPIRVExtension
             }
             string profile = profileDictionary[fileExt];
 
-            List<string> commandLineArgs = new List<string>();
-            commandLineArgs.Add("-spirv");
-            commandLineArgs.Add("-T " + profile);
-            commandLineArgs.Add("-E main");
+            List<string> commandLineArgs = new List<string>
+            {
+                "-spirv",
+                "-T " + profile,
+                "-E main"
+            };
             if (package.OptionTargetEnv != "")
             {
                 commandLineArgs.Add("-fspv-target-env=" + package.OptionTargetEnv);
