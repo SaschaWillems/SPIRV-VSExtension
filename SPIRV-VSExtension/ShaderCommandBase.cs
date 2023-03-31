@@ -1,4 +1,12 @@
-﻿using Microsoft.VisualStudio;
+﻿/*
+* SPIR-V Visual Studio Extension
+*
+* Copyright (C) 2016-2023 by Sascha Willems - www.saschawillems.de
+*
+* This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
+*/
+
+using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using SPIRVExtension.Shared;
@@ -44,6 +52,8 @@ namespace SPIRVExtension
         /// </summary>
         public void ReadItemHierarchy(uint itemid, IVsHierarchy hierarchy, List<uint> itemids)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             itemids.Add(itemid);
 
             object value = null;
@@ -81,6 +91,8 @@ namespace SPIRVExtension
         /// <returns>True if at least one shader has been selected</returns>
         public bool GetSelectedShaderFiles(List<ShaderFile> shaderFiles)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             IVsHierarchy hierarchy = null;
             uint itemid = VSConstants.VSITEMID_NIL;
             int hr = VSConstants.S_OK;
