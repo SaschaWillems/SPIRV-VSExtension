@@ -20,6 +20,7 @@ using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.Win32;
 using System.Threading.Tasks;
 using System.Threading;
+using Microsoft.VisualStudio.Shell.Interop;
 
 public class OptionPageGrid : DialogPage
 {
@@ -63,7 +64,7 @@ namespace SPIRVExtension
     [ProvideMenuResource("Menus.ctmenu", 1)]
     [Guid(SPIRVExtensionPackage.PackageGuidString)]
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "pkgdef, VS and vsixmanifest are valid VS terms")]
-    [ProvideAutoLoad("f1536ef8-92ec-443c-9ed7-fdadf150da82", PackageAutoLoadFlags.BackgroundLoad)]
+    [ProvideAutoLoad(UIContextGuids80.SolutionExists, PackageAutoLoadFlags.BackgroundLoad)]
     [ProvideOptionPage(typeof(OptionPageGrid),
     "SPIRV Extension", "General", 0, 0, true)]
     public sealed class SPIRVExtensionPackage : AsyncPackage
@@ -90,18 +91,16 @@ namespace SPIRVExtension
         {
             await base.InitializeAsync(cancellationToken, progress);
 
-            CommandCompileVulkan.Initialize(this);
-            CommandCompileHLSL.Initialize(this);
-            CommandCompileOpenGL.Initialize(this);
-            CommandPrintSPIRV.Initialize(this);
+            await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
 
-            //base.Initialize();
+            OleMenuCommandService commandService = await GetServiceAsync(typeof(IMenuCommandService)) as OleMenuCommandService;
+
+            CommandCompileVulkan.Initialize(this, commandService);
+            CommandCompileHLSL.Initialize(this, commandService);
+            CommandCompileOpenGL.Initialize(this, commandService);
+            CommandPrintSPIRV.Initialize(this, commandService);
+
             ErrorList.Initialize(this);
-
-            // When initialized asynchronously, we *may* be on a background thread at this point.
-            // Do any initialization that requires the UI thread after switching to the UI thread.
-            // Otherwise, remove the switch to the UI thread if you don't need it.
-            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
         }
 
         public string OptionTargetEnv

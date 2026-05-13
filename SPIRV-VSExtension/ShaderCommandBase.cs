@@ -202,17 +202,32 @@ namespace SPIRVExtension
         /// <param name="shaderFile">Shader file info for which the validator output has been generated</param>
         public virtual void ParseErrors(List<string> validatorOutput, ShaderFile shaderFile) { }
 
+        protected virtual string LocateCompiler()
+        {
+            return GlslangCompiler.Locate(package as SPIRVExtensionPackage);
+        }
+
+        protected virtual string MissingCompilerMessage
+        {
+            get
+            {
+                return "Could not locate the glslang reference compiler (glslangvalidator.exe) in system path!";
+            }
+        }
+
         /// <summary>
         /// Compile the shader file using the given compilation function
         /// </summary>
         public void CompileShaders(List<ShaderFile> shaderFiles, CompileFunc compileFunc)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             string title = name;
             string msg;
 
-            if (GlslangCompiler.Locate(package as SPIRVExtensionPackage) == null)
+            if (LocateCompiler() == null)
             {
-                msg = "Could not locate the glslang reference compiler (glslangvalidator.exe) in system path!";
+                msg = MissingCompilerMessage;
                 VsShellUtilities.ShowMessageBox(ServiceProvider, msg, title, OLEMSGICON.OLEMSGICON_CRITICAL, OLEMSGBUTTON.OLEMSGBUTTON_OK, OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
                 OutputWindow.Add(msg);
                 return;
@@ -270,6 +285,8 @@ namespace SPIRVExtension
         /// </summary>
         public bool GetReadableSPIRV(ShaderFile shaderFile, out List<string> spirvOutput)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             List<string> output = new List<string>();
             spirvOutput = output;
             string title = name;

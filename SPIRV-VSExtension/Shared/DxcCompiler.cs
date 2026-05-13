@@ -25,10 +25,10 @@ namespace SPIRVExtension
         /// </summary>
         public static string Locate(SPIRVExtensionPackage package)
         {
-            if (package.OptionGlslangValidatorBinaryPath != "")
+            if (package.OptionDxcBinaryPath != "")
             {
-                OutputWindow.Add("Using glslangvalidator from options path: " + Path.Combine(package.OptionGlslangValidatorBinaryPath, "glslangvalidator.exe"));
-                return Path.Combine(package.OptionGlslangValidatorBinaryPath, "glslangvalidator.exe");
+                OutputWindow.Add("Using dxc from options path: " + Path.Combine(package.OptionDxcBinaryPath, "dxc.exe"));
+                return Path.Combine(package.OptionDxcBinaryPath, "dxc.exe");
             }
 
             var pathEnv = Environment.GetEnvironmentVariable("PATH");

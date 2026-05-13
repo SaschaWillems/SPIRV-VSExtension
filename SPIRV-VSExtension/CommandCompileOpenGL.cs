@@ -18,25 +18,23 @@ namespace SPIRVExtension
     {
         public const int CommandId = 0x0110;
         public static readonly Guid CommandSet = new Guid("c25a4989-8e55-4457-822d-1e690eb23169");
-        private readonly Package package;
 
-        private CommandCompileOpenGL(Package package) : base(package, "Compile to SPIR-V (OpenGL semantics)")
+        private CommandCompileOpenGL(AsyncPackage package, OleMenuCommandService commandService) : base(package, "Compile to SPIR-V (OpenGL semantics)")
         {
             if (package == null)
             {
-                throw new ArgumentNullException("package");
+                throw new ArgumentNullException(nameof(package));
             }
 
-            this.package = package;
-
-            OleMenuCommandService mcs = this.ServiceProvider.GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
-            if (null != mcs)
+            if (commandService == null)
             {
-                CommandID menuCommandID = new CommandID(CommandSet, (int)CommandId);
-                OleMenuCommand oleMenuItem = new OleMenuCommand(new EventHandler(MenuItemCallback), menuCommandID);
-                oleMenuItem.BeforeQueryStatus += new EventHandler(OnBeforeQueryStatus);
-                mcs.AddCommand(oleMenuItem);
+                throw new ArgumentNullException(nameof(commandService));
             }
+
+            CommandID menuCommandID = new CommandID(CommandSet, (int)CommandId);
+            OleMenuCommand oleMenuItem = new OleMenuCommand(new EventHandler(MenuItemCallback), menuCommandID);
+            oleMenuItem.BeforeQueryStatus += new EventHandler(OnBeforeQueryStatus);
+            commandService.AddCommand(oleMenuItem);
         }
 
         public static CommandCompileOpenGL Instance
@@ -45,13 +43,16 @@ namespace SPIRVExtension
             private set;
         }
 
-        public static void Initialize(Package package)
+        public static void Initialize(AsyncPackage package, OleMenuCommandService commandService)
         {
-            Instance = new CommandCompileOpenGL(package);
+            ThreadHelper.ThrowIfNotOnUIThread();
+            Instance = new CommandCompileOpenGL(package, commandService);
         }
 
         private void MenuItemCallback(object sender, EventArgs e)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             List<ShaderFile> selectedShaderFiles = new List<ShaderFile>();
             if (GetSelectedShaderFiles(selectedShaderFiles))
             {
@@ -61,6 +62,8 @@ namespace SPIRVExtension
 
         void OnBeforeQueryStatus(object sender, EventArgs e)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var item = (OleMenuCommand)sender;
             if (item != null)
             {

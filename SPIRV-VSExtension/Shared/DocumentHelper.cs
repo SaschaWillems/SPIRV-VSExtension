@@ -24,7 +24,9 @@ namespace SPIRVExtension
         /// </summary>
         public static void OpenAndNavigateTo(string fileName, int line, int column = 0)
         {
-            IVsUIShellOpenDocument uishellOpenDocument = Package.GetGlobalService(typeof(IVsUIShellOpenDocument)) as IVsUIShellOpenDocument;
+            ThreadHelper.ThrowIfNotOnUIThread();
+
+            IVsUIShellOpenDocument uishellOpenDocument = Package.GetGlobalService(typeof(SVsUIShellOpenDocument)) as IVsUIShellOpenDocument;
             if (uishellOpenDocument != null)
             {
                 Microsoft.VisualStudio.OLE.Interop.IServiceProvider serviceProvider;
@@ -49,7 +51,7 @@ namespace SPIRVExtension
                     }
                     if (buffer != null)
                     {
-                        IVsTextManager textManager = Package.GetGlobalService(typeof(VsTextManagerClass)) as IVsTextManager;
+                        IVsTextManager textManager = Package.GetGlobalService(typeof(SVsTextManager)) as IVsTextManager;
                         textManager.NavigateToLineAndColumn(buffer, ref logicalView, line, column, line, column);
                     }
                 }
@@ -61,6 +63,8 @@ namespace SPIRVExtension
         /// </summary>
         public static void NavigateDocument(object sender, EventArgs e)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             ErrorTask task = sender as ErrorTask;
             OpenAndNavigateTo(task.Document, task.Line, task.Column);
         }
