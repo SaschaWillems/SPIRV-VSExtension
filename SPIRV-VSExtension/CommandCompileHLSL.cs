@@ -10,32 +10,31 @@ using System;
 using System.ComponentModel.Design;
 using System.Collections.Generic;
 using Microsoft.VisualStudio.Shell;
+using System.Text.RegularExpressions;
 
 namespace SPIRVExtension
-{    
+{
     internal sealed class CommandCompileHLSL : ShaderCommandBase
     {
         public const int CommandId = 0x0140;
         public static readonly Guid CommandSet = new Guid("c25a4989-8e55-4457-822d-1e690eb23169");
-        private readonly Package package;
 
-        private CommandCompileHLSL(Package package) : base(package, "Compile HLSL to SPIR-V (Vulkan only)")
+        private CommandCompileHLSL(AsyncPackage package, OleMenuCommandService commandService) : base(package, "Compile HLSL to SPIR-V (Vulkan only)")
         {
             if (package == null)
             {
-                throw new ArgumentNullException("package");
+                throw new ArgumentNullException(nameof(package));
             }
 
-            this.package = package;
-
-            OleMenuCommandService mcs = this.ServiceProvider.GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
-            if (null != mcs)
+            if (commandService == null)
             {
-                CommandID menuCommandID = new CommandID(CommandSet, (int)CommandId);
-                OleMenuCommand oleMenuItem = new OleMenuCommand(new EventHandler(MenuItemCallback), menuCommandID);
-                oleMenuItem.BeforeQueryStatus += new EventHandler(OnBeforeQueryStatus);
-                mcs.AddCommand(oleMenuItem);
+                throw new ArgumentNullException(nameof(commandService));
             }
+
+            CommandID menuCommandID = new CommandID(CommandSet, (int)CommandId);
+            OleMenuCommand oleMenuItem = new OleMenuCommand(new EventHandler(MenuItemCallback), menuCommandID);
+            oleMenuItem.BeforeQueryStatus += new EventHandler(OnBeforeQueryStatus);
+            commandService.AddCommand(oleMenuItem);
         }
 
         public static CommandCompileHLSL Instance
@@ -44,13 +43,16 @@ namespace SPIRVExtension
             private set;
         }
 
-        public static void Initialize(Package package)
+        public static void Initialize(AsyncPackage package, OleMenuCommandService commandService)
         {
-            Instance = new CommandCompileHLSL(package);
+            ThreadHelper.ThrowIfNotOnUIThread();
+            Instance = new CommandCompileHLSL(package, commandService);
         }
 
         private void MenuItemCallback(object sender, EventArgs e)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             List<ShaderFile> selectedShaderFiles = new List<ShaderFile>();
             if (GetSelectedShaderFiles(selectedShaderFiles))
             {
@@ -60,6 +62,8 @@ namespace SPIRVExtension
 
         void OnBeforeQueryStatus(object sender, EventArgs e)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var item = (OleMenuCommand)sender;
             if (item != null)
             {
@@ -69,5 +73,41 @@ namespace SPIRVExtension
             }
         }
 
+        public override void ParseErrors(List<string> validatorOutput, ShaderFile shaderFile)
+        {
+            foreach (string line in validatorOutput)
+            {
+                // Example:
+                // V:\Vulkan\Vulkan_mstr\data\shaders\hlsl\raytracingbasic\raygen.rgen:38:2: error: use of undeclared identifier 'imxage'; did you mean 'image'?
+                MatchCollection matches = Regex.Matches(line, @":\d+:\d+", RegexOptions.IgnoreCase | RegexOptions.RightToLeft);
+                if (matches.Count > 0)
+                {
+                    // Line is the first number after :
+                    MatchCollection lineMatches = Regex.Matches(line, @":\d+:", RegexOptions.IgnoreCase);
+                    int errorLine = Convert.ToInt32(lineMatches[0].Value.Replace(":", ""));
+                    // Error message
+                    string msg = line;
+                    Match match = Regex.Match(line, @"ERROR:\s.*\d+:(.*)", RegexOptions.IgnoreCase);
+                    if (match.Success)
+                    {
+                        msg = match.Groups[1].Value;
+                    }
+                    ErrorList.Add(msg, shaderFile.fileName, errorLine, 0, shaderFile.hierarchy);
+                }
+            }
+        }
+
+        protected override string LocateCompiler()
+        {
+            return DxcCompiler.Locate(ServiceProvider as SPIRVExtensionPackage);
+        }
+
+        protected override string MissingCompilerMessage
+        {
+            get
+            {
+                return "Could not locate the DirectX Shader Compiler (dxc.exe) in system path!";
+            }
+        }
     }
 }

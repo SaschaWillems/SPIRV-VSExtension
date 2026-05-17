@@ -18,25 +18,23 @@ namespace SPIRVExtension
     {
         public const int CommandId = 0x0130;
         public static readonly Guid CommandSet = new Guid("c25a4989-8e55-4457-822d-1e690eb23169");
-        private readonly Package package;
 
-        private CommandPrintSPIRV(Package package) : base(package, "Print human readable SPIR-V")
+        private CommandPrintSPIRV(AsyncPackage package, OleMenuCommandService commandService) : base(package, "Print human readable SPIR-V")
         {
             if (package == null)
             {
-                throw new ArgumentNullException("package");
+                throw new ArgumentNullException(nameof(package));
             }
 
-            this.package = package;
-
-            OleMenuCommandService mcs = this.ServiceProvider.GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
-            if (null != mcs)
+            if (commandService == null)
             {
-                CommandID menuCommandID = new CommandID(CommandSet, (int)CommandId);
-                OleMenuCommand oleMenuItem = new OleMenuCommand(new EventHandler(MenuItemCallback), menuCommandID);
-                oleMenuItem.BeforeQueryStatus += new EventHandler(OnBeforeQueryStatus);
-                mcs.AddCommand(oleMenuItem);
+                throw new ArgumentNullException(nameof(commandService));
             }
+
+            CommandID menuCommandID = new CommandID(CommandSet, (int)CommandId);
+            OleMenuCommand oleMenuItem = new OleMenuCommand(new EventHandler(MenuItemCallback), menuCommandID);
+            oleMenuItem.BeforeQueryStatus += new EventHandler(OnBeforeQueryStatus);
+            commandService.AddCommand(oleMenuItem);
         }
 
         public static CommandPrintSPIRV Instance
@@ -45,13 +43,16 @@ namespace SPIRVExtension
             private set;
         }
 
-        public static void Initialize(Package package)
+        public static void Initialize(AsyncPackage package, OleMenuCommandService commandService)
         {
-            Instance = new CommandPrintSPIRV(package);
+            ThreadHelper.ThrowIfNotOnUIThread();
+            Instance = new CommandPrintSPIRV(package, commandService);
         }
 
         private void MenuItemCallback(object sender, EventArgs e)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             List<ShaderFile> selectedShaderFiles = new List<ShaderFile>();
             if (GetSelectedShaderFiles(selectedShaderFiles))
             {
@@ -75,6 +76,8 @@ namespace SPIRVExtension
 
         void OnBeforeQueryStatus(object sender, EventArgs e)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var item = (OleMenuCommand)sender;
             if (item != null)
             {

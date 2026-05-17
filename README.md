@@ -25,7 +25,7 @@ For compiling from HLSL, the extension requires a version of the DirectX shader 
 The extension will search for the ```dxc.exe``` using the paths from the following environment variables: ```PATH```, ```VK_SDK_PATH``` and ```VULKAN_SDK``` (set by the LunarG SDK). Alternatively you can override this with an explicit location in the extensions' settings page.
 
 ### Supported Visual Studio versions
-The extension supports all editions of **Visual Studio 2015, 2017 and 2019**.
+The extension supports all editions of **Visual Studio 2022**.
 
 ## Installation
 

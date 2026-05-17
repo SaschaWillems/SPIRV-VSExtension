@@ -1,4 +1,12 @@
-﻿using Microsoft.VisualStudio;
+﻿/*
+* SPIR-V Visual Studio Extension
+*
+* Copyright (C) 2016-2023 by Sascha Willems - www.saschawillems.de
+*
+* This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
+*/
+
+using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using SPIRVExtension.Shared;
@@ -44,6 +52,8 @@ namespace SPIRVExtension
         /// </summary>
         public void ReadItemHierarchy(uint itemid, IVsHierarchy hierarchy, List<uint> itemids)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             itemids.Add(itemid);
 
             object value = null;
@@ -81,6 +91,8 @@ namespace SPIRVExtension
         /// <returns>True if at least one shader has been selected</returns>
         public bool GetSelectedShaderFiles(List<ShaderFile> shaderFiles)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             IVsHierarchy hierarchy = null;
             uint itemid = VSConstants.VSITEMID_NIL;
             int hr = VSConstants.S_OK;
@@ -188,27 +200,18 @@ namespace SPIRVExtension
         /// </summary>
         /// <param name="validatorOutput">Output of the reference compiler</param>
         /// <param name="shaderFile">Shader file info for which the validator output has been generated</param>
-        public void ParseErrors(List<string> validatorOutput, ShaderFile shaderFile)
+        public virtual void ParseErrors(List<string> validatorOutput, ShaderFile shaderFile) { }
+
+        protected virtual string LocateCompiler()
         {
-            foreach (string line in validatorOutput)
+            return GlslangCompiler.Locate(package as SPIRVExtensionPackage);
+        }
+
+        protected virtual string MissingCompilerMessage
+        {
+            get
             {
-                // Examples: 
-                //  ERROR: 0:26: 'aaa' : undeclared identifier 
-                //  ERROR: E:\Vulkan\public\Vulkan\data\shaders\indirectdraw\ground.frag:16: '' : function does not return a value: test
-                MatchCollection matches = Regex.Matches(line, @":\d+:\s", RegexOptions.IgnoreCase | RegexOptions.RightToLeft);
-                if (matches.Count > 0)
-                {
-                    // Line
-                    int errorLine = Convert.ToInt32(matches[0].Value.Replace(":", ""));
-                    // Error message
-                    string msg = line;
-                    Match match = Regex.Match(line, @"ERROR:\s.*\d+:(.*)", RegexOptions.IgnoreCase);
-                    if (match.Success)
-                    {
-                        msg = match.Groups[1].Value;
-                    }
-                    ErrorList.Add(msg, shaderFile.fileName, errorLine, 0, shaderFile.hierarchy);
-                }
+                return "Could not locate the glslang reference compiler (glslangvalidator.exe) in system path!";
             }
         }
 
@@ -217,17 +220,18 @@ namespace SPIRVExtension
         /// </summary>
         public void CompileShaders(List<ShaderFile> shaderFiles, CompileFunc compileFunc)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             string title = name;
             string msg;
 
-            // @todo
-            //if (GlslangCompiler.Locate(package as SPIRVExtensionPackage) == null)
-            //{
-            //    msg = "Could not locate the glslang reference compiler (glslangvalidator.exe) in system path!";
-            //    VsShellUtilities.ShowMessageBox(ServiceProvider, msg, title, OLEMSGICON.OLEMSGICON_CRITICAL, OLEMSGBUTTON.OLEMSGBUTTON_OK, OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
-            //    OutputWindow.Add(msg);
-            //    return;
-            //}
+            if (LocateCompiler() == null)
+            {
+                msg = MissingCompilerMessage;
+                VsShellUtilities.ShowMessageBox(ServiceProvider, msg, title, OLEMSGICON.OLEMSGICON_CRITICAL, OLEMSGBUTTON.OLEMSGBUTTON_OK, OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST);
+                OutputWindow.Add(msg);
+                return;
+            }
             
             ErrorList.Clear();
 
@@ -281,6 +285,8 @@ namespace SPIRVExtension
         /// </summary>
         public bool GetReadableSPIRV(ShaderFile shaderFile, out List<string> spirvOutput)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             List<string> output = new List<string>();
             spirvOutput = output;
             string title = name;
