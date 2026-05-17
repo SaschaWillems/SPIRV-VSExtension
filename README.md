@@ -25,7 +25,7 @@ For compiling from HLSL, the extension requires a version of the DirectX shader 
 The extension will search for the ```dxc.exe``` using the paths from the following environment variables: ```PATH```, ```VK_SDK_PATH``` and ```VULKAN_SDK``` (set by the LunarG SDK). Alternatively you can override this with an explicit location in the extensions' settings page.
 
 ### Supported Visual Studio versions
-The extension supports all editions of **Visual Studio 2022**.
+The extension supports all editions of **Visual Studio 2022 and 2026**.
 
 ## Installation
 
@@ -79,18 +79,3 @@ This will output human readable SPIR-V (-H) using Vulkan semantics and displays 
 <img src="./images/errorlist.png" width="512px">
 
 Compile errors are added to the error list of Visual Studio and work like regular compile errors. Double clicking on an error will open that shader and jump to the line that the error has occured.
-
-## Todo
-This is a very early version of this extension, some of the planned features are:
-- Extension settings pane
-  - Add file extension mappings
-  - Custom binary SPIR-V output file name scheme (instead of a fixed output file scheme)
-  - Option to disable dialog boxes after compile
-  - Option to use a remapper (SPIR-V remap etc.)
-- Save to text as hexadecimal numbers (-x)
-  - Generate include headers
-- Language features (as soon as their support by the reference compiler is finished)
-  - Multiple main entry points
-  - Compile from HLSL
-
-Issues and pull request for additional features are welcome :)
